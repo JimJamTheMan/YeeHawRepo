@@ -236,13 +236,13 @@ public class Barrel : MonoBehaviour
 
             if (maxStoredAmmo == 0)
             {
-                    currentAmmo = currentAmmo + 1; 
-                    break; 
-            
+                currentAmmo = currentAmmo + 1;
+                HudReload();
+                break; 
             }
             
             else
-            currentAmmo = currentAmmo + 1;
+                currentAmmo = currentAmmo + 1;
 
             HudReload();
 
