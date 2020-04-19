@@ -15,6 +15,7 @@ public class Barrel : MonoBehaviour
     public Text currentAmmoDisplay; 
     public Text maxStoredAmmoDisplay;
 
+    /*
     [SerializeField] private Image zeroBullets;
     [SerializeField] private Image oneBullets;
     [SerializeField] private Image twoBullets;
@@ -22,9 +23,11 @@ public class Barrel : MonoBehaviour
     [SerializeField] private Image fourBullets;
     [SerializeField] private Image fiveBullets;
     [SerializeField] private Image sixBullets;
+    */
 
-
-
+    [SerializeField] private Image gunReloadImage = null;
+    [SerializeField] private Animator gunReloadAnimator = null;
+    [SerializeField] private Sprite[] gunReloadSprites = null;
      
 
     //public Image[] cylinder;
@@ -60,26 +63,15 @@ public class Barrel : MonoBehaviour
     void Start(){
 
 
-    spriteRenderer2 = GetComponent<SpriteRenderer>();
-     animator = GetComponent<Animator>();
-     animator.Play("New Animation");
+        spriteRenderer2 = GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>();
+        animator.Play("New Animation");
         
         isReloading = false;
         isCocking = false;
         //StartCoroutine (Cocking());
 
-           
-
-        if (currentAmmo == - 1); 
-            currentAmmo = maxAmmo;
-
-             zeroBullets.enabled = false;
-             oneBullets.enabled = false;
-             twoBullets.enabled = false;
-             threeBullets.enabled = false;
-             fourBullets.enabled = false;   
-             fiveBullets.enabled = false;
-             sixBullets.enabled = false;
+        currentAmmo = maxAmmo;
     }
 
 
@@ -126,7 +118,7 @@ public class Barrel : MonoBehaviour
 
        Player_Controller_2D.UnPlayerFlip();
         
-        HudReload();
+        //HudReload();
 
        if (isReloading)
            {
@@ -204,6 +196,8 @@ public class Barrel : MonoBehaviour
        
        currentAmmo--;
        currentCocking--;
+
+       PlayReloadAnimation(currentAmmo);
        
       SoundManagerScript.PlaySound ("RevolverShot");
       Debug.Log("Shooting");
@@ -229,38 +223,40 @@ public class Barrel : MonoBehaviour
 
         animator.Play("RevolverReloading");
         
-            while (currentAmmo < maxAmmo)
-            {
- 
-                SoundManagerScript.PlaySound ("RevolverReloading");
-                
-                yield return new WaitForSeconds(0.333333333f);
-                maxStoredAmmo = maxStoredAmmo - 1;
-                maxStoredAmmoDisplay.text = maxStoredAmmo.ToString();
-                
-                currentAmmoDisplay.text = currentAmmo.ToString();
+        while (currentAmmo < maxAmmo)
+        {
 
-                if (maxStoredAmmo == 0)
-                {
-                        currentAmmo = currentAmmo + 1; 
-                        break; 
-                
-				}
-                
-                else
+            SoundManagerScript.PlaySound ("RevolverReloading");
+            
+            yield return new WaitForSeconds(0.333333333f);
+            maxStoredAmmo = maxStoredAmmo - 1;
+            maxStoredAmmoDisplay.text = maxStoredAmmo.ToString();
+            
+            currentAmmoDisplay.text = currentAmmo.ToString();
+
+            if (maxStoredAmmo == 0)
+            {
+                currentAmmo = currentAmmo + 1;
+                HudReload();
+                break; 
+            }
+            
+            else
                 currentAmmo = currentAmmo + 1;
 
-             }
+            HudReload();
 
-              SoundManagerScript.PlaySound ("GunCocking");
-              yield return new WaitForSeconds(.3f);
-              animator.Play("New Animation");
+        }
 
-            isReloading = false;
+        SoundManagerScript.PlaySound ("GunCocking");
+        yield return new WaitForSeconds(.3f);
+        animator.Play("New Animation");
+
+        isReloading = false;
     
 	}
 
-        IEnumerator Cocking()
+    IEnumerator Cocking()
     {
         isCocking = true;
         //Debug.Log("Cocking");
@@ -276,96 +272,101 @@ public class Barrel : MonoBehaviour
         animator.Play("New Animation");
         currentCocking = maxCocking;
         isCocking = false;
-        }
+    }
 
-        void HudReload()
+    void HudReload()
+    {
+        //gunReloadImage.sprite = gunReloadSprites[currentAmmo];
+        gunReloadAnimator.Play(currentAmmo.ToString() + "ShotsIdle");
+
+        /*
+        switch (currentAmmo)
         {
-        
-            switch (currentAmmo)
-            {
-                case 0:
+            case 0:
 
-                zeroBullets.enabled = true;
-                oneBullets.enabled = false;
-                twoBullets.enabled = false;
-                threeBullets.enabled = false;
-                fourBullets.enabled = false;
-                fiveBullets.enabled = false;
-                sixBullets.enabled = false;
-                break;
-                
-                case 1:
-                zeroBullets.enabled = false;
-                oneBullets.enabled = true;
-                twoBullets.enabled = false;
-                threeBullets.enabled = false;
-                fourBullets.enabled = false;
-                fiveBullets.enabled = false;
-                sixBullets.enabled = false;
-                fiveBullets.enabled = false;
+            zeroBullets.enabled = true;
+            oneBullets.enabled = false;
+            twoBullets.enabled = false;
+            threeBullets.enabled = false;
+            fourBullets.enabled = false;
+            fiveBullets.enabled = false;
+            sixBullets.enabled = false;
+            break;
+            
+            case 1:
+            zeroBullets.enabled = false;
+            oneBullets.enabled = true;
+            twoBullets.enabled = false;
+            threeBullets.enabled = false;
+            fourBullets.enabled = false;
+            fiveBullets.enabled = false;
+            sixBullets.enabled = false;
+            fiveBullets.enabled = false;
 
-                
-                break;
+            
+            break;
 
-                case 2:
+            case 2:
 
-                zeroBullets.enabled = false;
-                oneBullets.enabled = false;
-                twoBullets.enabled = true;
-                threeBullets.enabled = false;
-                fourBullets.enabled = false;
-                fiveBullets.enabled = false;
-                sixBullets.enabled = false;
-                break;
-                
-                case 3:
-                zeroBullets.enabled = false;
-                oneBullets.enabled = false;
-                twoBullets.enabled = false;
-                threeBullets.enabled = true;
-                fourBullets.enabled = false;
-                fiveBullets.enabled = false;
-                sixBullets.enabled = false;
-                break;
+            zeroBullets.enabled = false;
+            oneBullets.enabled = false;
+            twoBullets.enabled = true;
+            threeBullets.enabled = false;
+            fourBullets.enabled = false;
+            fiveBullets.enabled = false;
+            sixBullets.enabled = false;
+            break;
+            
+            case 3:
+            zeroBullets.enabled = false;
+            oneBullets.enabled = false;
+            twoBullets.enabled = false;
+            threeBullets.enabled = true;
+            fourBullets.enabled = false;
+            fiveBullets.enabled = false;
+            sixBullets.enabled = false;
+            break;
 
-                case 4:
+            case 4:
 
-                zeroBullets.enabled = false;
-                oneBullets.enabled = false;
-                twoBullets.enabled = false;
-                threeBullets.enabled = false;
-                fourBullets.enabled = true;
-                fiveBullets.enabled = false;
-                sixBullets.enabled = false;
-                break;
-                
-                case 5:
-                zeroBullets.enabled = false;
-                oneBullets.enabled = false;
-                twoBullets.enabled = false;
-                threeBullets.enabled = false;
-                fourBullets.enabled = false;
-                fiveBullets.enabled = true;
-                sixBullets.enabled = false;
-                break;
-                
-                case 6:
-                zeroBullets.enabled = false;
-                oneBullets.enabled = false;
-                twoBullets.enabled = false;
-                threeBullets.enabled = false;
-                fourBullets.enabled = false;
-                fiveBullets.enabled = false;
-                sixBullets.enabled = true;
-                break;
-
-
-			}
+            zeroBullets.enabled = false;
+            oneBullets.enabled = false;
+            twoBullets.enabled = false;
+            threeBullets.enabled = false;
+            fourBullets.enabled = true;
+            fiveBullets.enabled = false;
+            sixBullets.enabled = false;
+            break;
+            
+            case 5:
+            zeroBullets.enabled = false;
+            oneBullets.enabled = false;
+            twoBullets.enabled = false;
+            threeBullets.enabled = false;
+            fourBullets.enabled = false;
+            fiveBullets.enabled = true;
+            sixBullets.enabled = false;
+            break;
+            
+            case 6:
+            zeroBullets.enabled = false;
+            oneBullets.enabled = false;
+            twoBullets.enabled = false;
+            threeBullets.enabled = false;
+            fourBullets.enabled = false;
+            fiveBullets.enabled = false;
+            sixBullets.enabled = true;
+            break;
 
 
         }
 
+        */
+    }
 
 
+    void PlayReloadAnimation(int bullets) {
+        gunReloadAnimator.Play(bullets.ToString() + "Shots");
+    }
 
 }
