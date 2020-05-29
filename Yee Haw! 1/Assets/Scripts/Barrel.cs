@@ -77,7 +77,7 @@ public class Barrel : MonoBehaviour
 
    void FixedUpdate()
     {
-     
+        
         currentAmmoDisplay.text = currentAmmo.ToString(); 
         maxStoredAmmoDisplay.text = maxStoredAmmo.ToString();
         
